@@ -18,6 +18,8 @@
 #define USART_BAUD(usartx)            REG32((usartx) + (0x00000008U))   /*!< USART baud rate register */
 #define USART_CTL0(usartx)            REG32((usartx) + (0x0000000CU))   /*!< USART control register 0 */
 #define USART_CTL1(usartx)            REG32((usartx) + (0x00000010U))   /*!< USART control register 1 */
+#define USART_CTL2(usartx)            REG32((usartx) + (0x00000014U))   /*!< USART control register 2 */
+#define USART_GP(usartx)              REG32((usartx) + (0x00000018U))   /*!< USART guard time and prescaler register */
 
 /* USARTx_DATA */
 #define USART_DATA_DATA               BITS(0,8)                         /*!< transmit or read data value */
@@ -88,6 +90,11 @@
 #define USART_TRANSMIT_ENABLE         CTL0_TEN(1)                       /*!< enable transmitter */
 #define USART_TRANSMIT_DISABLE        CTL0_TEN(0)                       /*!< disable transmitter */
 
+/* USART receiver configure */
+#define CTL0_REN(regval)              (BIT(2) & ((uint32_t)(regval) << 2))
+#define USART_RECEIVE_ENABLE          CTL0_REN(1)                       /*!< enable receiver */
+#define USART_RECEIVE_DISABLE         CTL0_REN(0)                       /*!< disable receiver */
+
 /* USART parity bits definitions */
 #define CTL0_PM(regval)               (BITS(9,10) & ((uint32_t)(regval) << 9))
 #define USART_PM_NONE                 CTL0_PM(0)                        /*!< no parity */
@@ -146,16 +153,26 @@ typedef enum
 }usart_flag_enum;
 
 
+// initialization functions 
 void diy_usart_deinit(uint32_t usart_periph);
 void diy_usart_baudrate_set(uint32_t usart_periph, uint32_t baudval);
 void diy_usart_parity_config(uint32_t usart_periph, uint32_t paritycfg);
 void diy_usart_word_length_set(uint32_t usart_periph, uint32_t wlen);
 void diy_usart_stop_bit_set(uint32_t usart_periph, uint32_t stblen);
+
+// USART normal mode communication
 void diy_usart_enable(uint32_t usart_periph);
 void diy_usart_disable(uint32_t usart_periph);
 void diy_usart_transmit_config(uint32_t usart_periph, uint32_t txconfig);
+void diy_usart_receive_config(uint32_t usart_periph, uint32_t rxconfig);
 void diy_usart_data_transmit(uint32_t usart_periph, uint32_t data);
+uint16_t diy_usart_data_receive(uint32_t usart_periph);
+
+//flag functions
 FlagStatus diy_usart_flag_get(uint32_t usart_periph, usart_flag_enum flag);
 
+// hardware flow communication 
+void diy_usart_hardware_flow_rts_config(uint32_t usart_periph, uint32_t rtsconfig);
+void diy_usart_hardware_flow_cts_config(uint32_t usart_periph, uint32_t ctsconfig);
 
 #endif //DIY_GD32VF103_H

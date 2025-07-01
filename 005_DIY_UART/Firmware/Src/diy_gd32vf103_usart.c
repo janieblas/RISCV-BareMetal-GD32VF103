@@ -83,11 +83,26 @@ void diy_usart_transmit_config(uint32_t usart_periph, uint32_t txconfig)
     USART_CTL0(usart_periph) = ctl;
 }
 
+void diy_usart_receive_config(uint32_t usart_periph, uint32_t rxconfig)
+{
+    uint32_t ctl = 0U;
+    
+    ctl = USART_CTL0(usart_periph);
+    ctl &= ~USART_CTL0_REN;
+    ctl |= rxconfig;
+    /* configure receiver mode */
+    USART_CTL0(usart_periph) = ctl;
+}
+
 void diy_usart_data_transmit(uint32_t usart_periph, uint32_t data)
 {
     USART_DATA(usart_periph) = USART_DATA_DATA & data;
 }
 
+uint16_t diy_usart_data_receive(uint32_t usart_periph)
+{
+    return (uint16_t)(GET_BITS(USART_DATA(usart_periph), 0U, 8U));
+}
 
 FlagStatus diy_usart_flag_get(uint32_t usart_periph, usart_flag_enum flag)
 {
@@ -96,4 +111,25 @@ FlagStatus diy_usart_flag_get(uint32_t usart_periph, usart_flag_enum flag)
     }else{
         return RESET;
     }
+}
+
+void diy_usart_hardware_flow_rts_config(uint32_t usart_periph, uint32_t rtsconfig)
+{
+    uint32_t ctl = 0U;
+    
+    ctl = USART_CTL2(usart_periph);
+    ctl &= ~USART_CTL2_RTSEN;
+    ctl |= rtsconfig;
+    /* configure RTS */
+    USART_CTL2(usart_periph) = ctl;
+}
+void diy_usart_hardware_flow_cts_config(uint32_t usart_periph, uint32_t ctsconfig)
+{
+    uint32_t ctl = 0U;
+    
+    ctl = USART_CTL2(usart_periph);
+    ctl &= ~USART_CTL2_CTSEN;
+    ctl |= ctsconfig;
+    /* configure CTS */
+    USART_CTL2(usart_periph) = ctl;
 }
