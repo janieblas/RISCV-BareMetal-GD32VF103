@@ -238,6 +238,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 #include "gd32vf103_rcu.h"
 #include "gd32vf103_gpio.h"
 #include "system_gd32vf103.h"
+#include "diy_gd32vf103_usart.h"
 
 #ifdef cplusplus
 }

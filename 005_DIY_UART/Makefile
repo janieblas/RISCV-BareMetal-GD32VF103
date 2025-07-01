@@ -21,10 +21,10 @@ CFLAGS = -c -g -fno-builtin -ffreestanding $(COMMON_FLAGS)
 LFLAGS = -Wall -Wl,--no-relax -Wl,--gc-sections -nostdlib -nostartfiles -lgcc $(ARCH_FLAGS) -T gd32vf103xb.ld
 
 # Header files (dependencies)
-HEADERS = Firmware/Include/gd32vf103.h Firmware/Include/gd32vf103_rcu.h Firmware/Include/gd32vf103_gpio.h
+HEADERS = Firmware/Include/gd32vf103.h Firmware/Include/gd32vf103_rcu.h Firmware/Include/gd32vf103_gpio.h Firmware/Include/diy_gd32vf103_usart.h
 
 # Object files to build
-OBJS = gd32vf103xb_boot.o main.o gd32vf103_rcu.o gd32vf103_gpio.o system_gd32vf103.o
+OBJS = gd32vf103xb_boot.o main.o gd32vf103_rcu.o gd32vf103_gpio.o system_gd32vf103.o diy_gd32vf103_usart.o
 
 # Disable implicit rules
 .SUFFIXES:
@@ -48,6 +48,9 @@ gd32vf103_gpio.o: Firmware/Src/gd32vf103_gpio.c $(HEADERS)
 
 system_gd32vf103.o: Firmware/Src/system_gd32vf103.c $(HEADERS)
 	$(CC) $(CFLAGS) Firmware/Src/system_gd32vf103.c -o system_gd32vf103.o
+
+diy_gd32vf103_usart.o: Firmware/Src/diy_gd32vf103_usart.c $(HEADERS)
+	$(CC) $(CFLAGS) Firmware/Src/diy_gd32vf103_usart.c -o diy_gd32vf103_usart.o
 
 # Rule to create an ELF file from the compiled object files.
 main.elf: $(OBJS)
