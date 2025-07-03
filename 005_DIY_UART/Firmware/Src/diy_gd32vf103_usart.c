@@ -133,3 +133,86 @@ void diy_usart_hardware_flow_cts_config(uint32_t usart_periph, uint32_t ctsconfi
     /* configure CTS */
     USART_CTL2(usart_periph) = ctl;
 }
+
+void diy_usart_config_f(uint32_t usart_periph, const diy_usart_config_t *usart_conf)
+{
+    
+    diy_usart_baudrate_set( usart_periph, usart_conf->baudrate);
+    
+    switch (usart_conf->data_bite)
+    {
+    case 8:
+        /* code */
+        diy_usart_word_length_set( usart_periph, USART_WL_8BIT);
+        break;
+    case 9:
+        diy_usart_word_length_set( usart_periph, USART_WL_9BIT);
+        /* code */
+        break;
+    default:
+        break;
+    }
+
+    switch (usart_conf->stop_bit)
+    {
+    case 1:
+        diy_usart_stop_bit_set( usart_periph, USART_STB_1BIT);
+        /* code */
+        break;
+    case 2:
+        diy_usart_stop_bit_set( usart_periph, USART_STB_2BIT);
+        /* code */
+        break;
+    default:
+        break;
+    }
+
+    switch (usart_conf->parity)
+    {
+    case 0:
+        diy_usart_parity_config( usart_periph, USART_PM_NONE);
+        /* code */
+        break;
+    case 1:
+        diy_usart_parity_config( usart_periph, USART_PM_EVEN);
+        /* code */
+        break;
+    case 2:
+        diy_usart_parity_config( usart_periph, USART_PM_ODD);
+        /* code */
+        break;    
+    default:
+        break;
+    }
+    
+}
+
+void diy_usart_send_byte(uint8_t data)
+{
+    while (RESET == diy_usart_flag_get(USART0, USART_FLAG_TBE));
+    
+    diy_usart_data_transmit(USART0, data);
+
+    while (RESET == diy_usart_flag_get(USART0, USART_FLAG_TC));
+    
+}
+
+void diy_usart_send_string(char* str)
+{
+    while (*str) {
+        diy_usart_send_byte(*str);
+        str++;
+    }
+}
+
+uint8_t diy_usart_receive_byte(void)
+{
+    while (RESET == diy_usart_flag_get(USART0, USART_FLAG_RBNE));
+
+    return (uint8_t)diy_usart_data_receive(USART0);
+}
+
+uint8_t diy_usart_is_data_available(void)
+{
+    return (diy_usart_flag_get(USART0, USART_FLAG_RBNE) == SET) ? 1 : 0;
+}

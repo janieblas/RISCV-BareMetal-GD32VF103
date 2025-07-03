@@ -113,29 +113,6 @@
 #define USART_STB_2BIT                CTL1_STB(2)                       /*!< 2 bits */
 #define USART_STB_1_5BIT              CTL1_STB(3)                       /*!< 1.5 bits */
 
-typedef struct {
- uint32_t baudrate;
- uint8_t data_bite;
- uint8_t stop_bit;
- uint8_t parity;
- uint8_t flow_control;
-}diy_usart_config_t;
-
-typedef enum {
-    USART_STATE_RESET = 0,
-    USART_STATE_READY,
-    USART_STATE_BUSY_TX,
-    USART_STATE_BUSY_RX,
-    USART_STATE_ERROR
-} diy_usart_state_t;
-
-typedef enum {
-    USART_OK = 0,
-    USART_ERROR,
-    USART_TIMEOUT,
-    USART_BUSY
-} diy_usart_status_t;
-
 /* USART flags */
 typedef enum
 {
@@ -152,6 +129,12 @@ typedef enum
     USART_FLAG_PERR = USART_REGIDX_BIT(USART_STAT_REG_OFFSET, 0U),      /*!< parity error flag */
 }usart_flag_enum;
 
+typedef struct {
+ uint32_t baudrate; // 9600, 115200, etc
+ uint8_t data_bite; // 8 o 9
+ uint8_t stop_bit;  // 1 o 2
+ uint8_t parity;    // 0 = None, 1 = Even, 2 = Odd
+}diy_usart_config_t;
 
 // initialization functions 
 void diy_usart_deinit(uint32_t usart_periph);
@@ -159,6 +142,9 @@ void diy_usart_baudrate_set(uint32_t usart_periph, uint32_t baudval);
 void diy_usart_parity_config(uint32_t usart_periph, uint32_t paritycfg);
 void diy_usart_word_length_set(uint32_t usart_periph, uint32_t wlen);
 void diy_usart_stop_bit_set(uint32_t usart_periph, uint32_t stblen);
+
+//set with struct
+void diy_usart_config_f(uint32_t usart_periph, const diy_usart_config_t *usart_conf);
 
 // USART normal mode communication
 void diy_usart_enable(uint32_t usart_periph);
@@ -175,4 +161,10 @@ FlagStatus diy_usart_flag_get(uint32_t usart_periph, usart_flag_enum flag);
 void diy_usart_hardware_flow_rts_config(uint32_t usart_periph, uint32_t rtsconfig);
 void diy_usart_hardware_flow_cts_config(uint32_t usart_periph, uint32_t ctsconfig);
 
+
+// complement func
+void diy_usart_send_byte(uint8_t data);
+void diy_usart_send_string(char* str);
+uint8_t diy_usart_receive_byte(void);
+uint8_t diy_usart_is_data_available(void);
 #endif //DIY_GD32VF103_H
